@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { HttpError } from "../../error/http.error";
 import User from "../../models/user.model";
 
 const handle = async (req: Request, res: Response) => {
@@ -6,7 +7,9 @@ const handle = async (req: Request, res: Response) => {
     const foundUser = await User.findById(id)
 
     if (!foundUser)
-        res.status(400).send({ error: "could not find user" })
+        throw new HttpError(400, "could not found user")
 
     res.status(200).send({ user: foundUser })
 }
+
+export { handle }

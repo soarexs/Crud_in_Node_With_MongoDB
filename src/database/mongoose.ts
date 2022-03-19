@@ -7,5 +7,6 @@ export const connect = async (uri = URI) => {
     if (!connection) { 
         connection = await Mongoose.connect(uri)
     }  
+    console.log("connect!")
     return connection 
 }

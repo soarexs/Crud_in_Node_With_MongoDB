@@ -1,12 +1,25 @@
 import User from "../../models/user.model"
 import { Request, Response } from "express"
+import { HttpError } from "../../error/http.error"
 
 const handle = async (req: Request, res: Response) => {
-    const user = await User.create(req.body)
-    if (!user)
-        throw res.status(400).send({ error: "could not create user" })
+    const { name, email, password } = req.body
+    const person = {
+        name,
+        email,
+        password
+    }
+    
+    const foundUser = await User.findOne(email)
+    if(foundUser)
+        throw new HttpError(400, "user already exists")
 
-    res.status(200).send({ user: user })
+    try {
+        const user = await User.create(person)
+        res.status(200).send({ user: user })
+    } catch {
+        throw new HttpError(400, "could not create user")    
+    }
 }
 
 export { handle }

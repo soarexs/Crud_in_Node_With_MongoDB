@@ -1,18 +1,28 @@
 import express, { Application } from "express";
 import bodyParser from "body-parser";
-import createUserRoute from "./routes/create-user.router";
+import userRoute from "./routes/user.routes";
+import { errorMiddleware } from "./middlewares/error-handler.middleware";
+import { connect as connectMongoose } from "./database/mongoose";
 
 export class App {
     private app: Application
 
     constructor() {
         this.app = express()
-        this.app.use(bodyParser.json())
-        this.app.use(bodyParser.urlencoded({ extended: false }))
+        this.middlewares
+        this.init
+    }
+    init() {
+        connectMongoose()
+    }
+    routes() {
+        this.app.use(userRoute)
     }
 
-    routes() {
-        this.app.use(createUserRoute)
+    middlewares() {
+        this.app.use(bodyParser.urlencoded({ extended: false }))
+        this.app.use(bodyParser.json())
+        this.app.use(errorMiddleware)
     }
 
     listen(PORT: number, message: string) {
